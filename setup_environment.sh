@@ -10,7 +10,7 @@ if [[ "$DEBUG" = "true" ]] || [[ "$DEBUG" -eq 1 ]]; then
 fi
 
 if ! grep -q ^WP_CLI_TESTS_MYSQL_PORT= .env; then
-	echo "WP_CLI_TESTS_MYSQL_PORT=33306" >> .env
+	echo "WP_CLI_TESTS_MYSQL_PORT=3306" >> .env
 fi
 
 if ! grep -q ^WP_CLI_TEST_DBROOTPASS= .env; then
@@ -30,7 +30,7 @@ if ! grep -q ^WP_CLI_TEST_DBPASS= .env; then
 fi
 
 if ! grep -q ^WP_CLI_TEST_DBHOST= .env; then
-	echo WP_CLI_TEST_DBHOST="localhost:33306" >> .env
+	echo WP_CLI_TEST_DBHOST="localhost:3306" >> .env
 fi
 
 # Detect which Docker Compose command is available
@@ -45,4 +45,13 @@ fi
 
 composer install --optimize-autoloader
 $docker_compose_cmd -f ./docker-compose.yml up -d
+printf "Waiting for MariaDB to be ready."
+until $docker_compose_cmd exec mysql mariadb-admin ping -hlocalhost -p3306 -uroot -ppassword >/dev/null 2>&1; do
+  sleep 1
+  printf '.'
+done
+echo
+$docker_compose_cmd exec mysql ln -sf /usr/bin/mariadb /usr/local/bin/mysql
 $docker_compose_cmd exec mysql /app/wp-cli-tests/bin/install-package-tests
+
+echo "Completed!"
