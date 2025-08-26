@@ -1,5 +1,6 @@
 services:
   mysql:
+    env_file: .env
     image: 'mariadb:lts'
     ports:
       - '${WP_CLI_TESTS_MYSQL_PORT:-}:3306'
@@ -9,6 +10,7 @@ services:
       MYSQL_DATABASE: wp_cli_test
     volumes:
       - 'mysql:/var/lib/mysql'
+      - '.:/app'
 
 volumes:
   mysql:
