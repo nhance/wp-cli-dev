@@ -1,0 +1,14 @@
+services:
+  mysql:
+    image: 'mariadb:lts'
+    ports:
+      - '${WP_CLI_TESTS_MYSQL_PORT:-}:3306'
+    environment:
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: ${WP_CLI_TEST_DBROOTPASS:-password}
+      MYSQL_DATABASE: wp_cli_test
+    volumes:
+      - 'mysql:/var/lib/mysql'
+
+volumes:
+  mysql:
