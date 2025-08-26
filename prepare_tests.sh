@@ -1,6 +1,5 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 set -e
-
 
 export WP_CLI_TESTS_MYSQL_PORT=33306
 export WP_CLI_TEST_DBROOTPASS=password
